@@ -1,0 +1,18 @@
+{
+  "name": "ecommerce-platform",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace @ecommerce/api\" \"npm run dev --workspace @ecommerce/web\"",
+    "build": "npm run build --workspace @ecommerce/api && npm run build --workspace @ecommerce/web",
+    "lint": "npm run lint --workspace @ecommerce/api && npm run lint --workspace @ecommerce/web",
+    "test": "npm run test --workspace @ecommerce/api && npm run test --workspace @ecommerce/web"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "turbo": "^2.1.2"
+  }
+}
