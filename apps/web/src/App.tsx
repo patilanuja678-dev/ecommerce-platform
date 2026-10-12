@@ -1,87 +1,75 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store/authStore";
+import { useEffect } from "react";
+import { Link, Route, Routes } from "react-router-dom";
+import { ProductListPage } from "./ProductListPage";
+import { ProductDetailPage } from "./ProductDetailPage";
 
-export function RegisterPage() {
-  const navigate = useNavigate();
-  const register = useAuthStore((state) => state.register);
-  const [name, setName] = useState("Demo Customer");
-  const [email, setEmail] = useState("customer@example.com");
-  const [password, setPassword] = useState("StrongPass123!");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      await register(name, email, password);
-      navigate("/");
-    } catch (err: any) {
-      setError(err?.response?.data?.message || "Registration failed");
-    } finally {
-      setLoading(false);
-    }
-  }
-
+export default function App() {
   return (
-    <div className="mx-auto max-w-md rounded-2xl bg-white p-8 shadow-md ring-1 ring-slate-200">
-      <h1 className="text-3xl font-bold text-slate-900">Create account</h1>
-      <p className="mt-2 text-sm text-slate-600">Join NovaCart and start shopping</p>
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      <header className="bg-slate-900 text-white shadow-sm">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
+          <Link to="/" className="text-2xl font-bold tracking-tight">
+            NovaCart
+          </Link>
 
-      <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-        <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">Full name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-orange-500"
-            required
-          />
+          <nav className="hidden gap-8 text-sm md:flex">
+            <Link to="/">Home</Link>
+            <Link to="/products">Products</Link>
+            <Link to="/checkout">Checkout</Link>
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <Link to="/login" className="rounded border border-slate-700 px-3 py-2 text-sm font-medium text-white">
+              Login
+            </Link>
+            <Link to="/register" className="rounded bg-orange-500 px-3 py-2 text-sm font-semibold text-white hover:bg-orange-600">
+              Register
+            </Link>
+          </div>
         </div>
+      </header>
 
-        <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-orange-500"
-            required
-          />
-        </div>
+      <main className="mx-auto max-w-7xl px-4 py-10">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/products" element={<ProductListPage />} />
+          <Route path="/products/:slug" element={<ProductDetailPage />} />
+          <Route path="/login" element={<div className="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200">Login Page</div>} />
+          <Route path="/register" element={<div className="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200">Register Page</div>} />
+          <Route path="/checkout" element={<div className="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200">Checkout Page</div>} />
+        </Routes>
+      </main>
+    </div>
+  );
+}
 
-        <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-orange-500"
-            required
-          />
-        </div>
-
-        {error && <div className="rounded bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>}
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-lg bg-orange-500 px-4 py-3 font-semibold text-white disabled:cursor-not-allowed disabled:bg-orange-300"
-        >
-          {loading ? "Creating account..." : "Create account"}
-        </button>
-      </form>
-
-      <p className="mt-5 text-sm text-slate-600">
-        Already have an account? {" "}
-        <Link to="/login" className="font-semibold text-orange-600">
-          Sign in
+function HomePage() {
+  return (
+    <div className="space-y-8">
+      <section className="rounded-2xl bg-gradient-to-r from-orange-500 to-amber-400 p-8 text-white shadow-lg">
+        <p className="text-sm uppercase tracking-[0.2em] text-orange-100">New arrival</p>
+        <h1 className="mt-4 text-4xl font-black">Big tech, smarter living.</h1>
+        <p className="mt-4 max-w-xl text-orange-50">
+          Discover premium essentials, everyday favorites, and curated deals that make shopping easier.
+        </p>
+        <Link to="/products" className="mt-6 inline-block rounded bg-slate-900 px-5 py-3 font-semibold text-white hover:bg-slate-800">
+          Shop deals
         </Link>
-      </p>
+      </section>
+
+      <section className="grid gap-6 md:grid-cols-3">
+        {[
+          { title: "Smartphones", price: "From ₹24,999" },
+          { title: "Home Essentials", price: "Up to 40% off" },
+          { title: "Accessories", price: "Trending picks" },
+        ].map((item) => (
+          <div key={item.title} className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+            <div className="mb-4 h-32 rounded-lg bg-gradient-to-br from-slate-200 to-slate-300" />
+            <h3 className="text-xl font-semibold">{item.title}</h3>
+            <p className="mt-2 text-sm text-slate-600">{item.price}</p>
+          </div>
+        ))}
+      </section>
     </div>
   );
 }
